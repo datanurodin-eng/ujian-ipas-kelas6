@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian IPAS Kelas 6 - SD N Nanggerang</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1, h2, h3, h4 { color: #2c3e50; text-align: center; }
+        .btn { padding: 12px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; font-size: 15px; }
+        .btn-primary { background-color: #3498db; }
+        .btn-success { background-color: #2ecc71; }
+        .btn-danger { background-color: #e74c3c; }
+        .btn-warning { background-color: #f1c40f; color: #333; }
+        .hidden { display: none; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .question-card { background: #fdfdfd; padding: 20px; border-left: 5px solid #3498db; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .options label { display: block; margin: 8px 0; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #e8f4f8; border-color: #3498db; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #3498db; color: white; }
+        textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; min-height: 80px; box-sizing: border-box; font-family: inherit; margin-bottom: 15px; }
+        .logout-btn { float: right; background: #e74c3c; }
+        .section-title { background: #3498db; color: white; padding: 10px; border-radius: 5px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- HALAMAN LOGIN -->
+    <div id="login-page">
+        <h1>Portal Ujian IPAS SD N Nanggerang</h1>
+        <hr>
+        <div class="form-group">
+            <label>Masuk Sebagai:</label>
+            <select id="role-select" onchange="toggleTeacherPass()">
+                <option value="siswa">Siswa</option>
+                <option value="guru">Guru</option>
+            </select>
+        </div>
+        <div class="form-group" id="name-group">
+            <label>Nama Lengkap Siswa:</label>
+            <input type="text" id="username" placeholder="Masukkan nama lengkap...">
+        </div>
+        <div class="form-group hidden" id="pass-group">
+            <label>Password Guru:</label>
+            <input type="password" id="password" placeholder="Masukkan sandi guru (default: admin123)">
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="login()">Masuk ke Portal</button>
+    </div>
+
+    <!-- HALAMAN SISWA (SOAL) -->
+    <div id="student-page" class="hidden">
+        <button class="btn logout-btn" onclick="logout()">Keluar</button>
+        <h2>Selamat Mengerjakan, <span id="student-name-display"></span>!</h2>
+        <p style="text-align:center;">Teliti kembali jawabanmu sebelum mengklik tombol kumpulkan.</p>
+        
+        <h3 class="section-title">A. Pilihan Ganda</h3>
+        <div id="quiz-container"></div>
+        
+        <h3 class="section-title">B. Isian Singkat</h3>
+        <p>26. Bagian tulang pada manusia yang berfungsi sebagai tempat melekatnya otot rangka adalah ...</p>
+        <textarea id="isian26" placeholder="Jawaban nomor 26..."></textarea>
+
+        <p>27. Penyakit tulang rapuh akibat kekurangan kalsium yang kerap dialami oleh para lansia disebut penyakit ...</p>
+        <textarea id="isian27" placeholder="Jawaban nomor 27..."></textarea>
+
+        <p>28. Bangsa asing asal Eropa yang pertama kali mendarat di Nusantara untuk mencari rempah-rempah adalah bangsa ...</p>
+        <textarea id="isian28" placeholder="Jawaban nomor 28..."></textarea>
+
+        <p>29. Perlawanan bersenjata mengusir penjajah sebelum abad ke-20 sering gagal karena strategi perjuangannya masih bersifat ...</p>
+        <textarea id="isian29" placeholder="Jawaban nomor 29..."></textarea>
+
+        <p>30. Peristiwa diamankannya Ir. Soekarno dan Moh. Hatta oleh para pemuda sebelum proklamasi dikenal dengan nama peristiwa ...</p>
+        <textarea id="isian30" placeholder="Jawaban nomor 30..."></textarea>
+
+        <h3 class="section-title">C. Uraian</h3>
+        <p>31. Mengapa tulang (rangka), sendi, dan otot harus saling bekerja sama? Jelaskan peran masing-masing dalam menghasilkan sebuah gerakan tubuh!</p>
+        <textarea id="uraian31" placeholder="Jawaban uraian 31..." style="min-height: 120px;"></textarea>
+
+        <p>32. Sebutkan 3 (tiga) pola kebiasaan baik yang harus kita terapkan sehari-hari untuk memelihara kesehatan sistem gerak manusia!</p>
+        <textarea id="uraian32" placeholder="Jawaban uraian 32..." style="min-height: 120px;"></textarea>
+
+        <p>33. Mengapa rempah-rempah menjadi komoditas utama yang sangat diburu oleh bangsa-bangsa Eropa pada masa penjajahan Nusantara?</p>
+        <textarea id="uraian33" placeholder="Jawaban uraian 33..." style="min-height: 120px;"></textarea>
+
+        <p>34. Sebutkan 3 (tiga) nama pahlawan nasional Indonesia beserta daerah asal perlawanannya dalam mengusir penjajah kolonial!</p>
+        <textarea id="uraian34" placeholder="Jawaban uraian 34..." style="min-height: 120px;"></textarea>
+
+        <p>35. Peristiwa Rengasdengklok melibatkan dua kubu. Jelaskan apa alasan utama golongan muda 'memaksa' golongan tua ke Rengasdengklok menjelang kemerdekaan!</p>
+        <textarea id="uraian35" placeholder="Jawaban uraian 35..." style="min-height: 120px;"></textarea>
+        
+        <br><br>
+        <button class="btn btn-success" style="width:100%; font-size: 18px; padding: 15px;" onclick="submitExam()">KUMPULKAN SELURUH JAWABAN</button>
+    </div>
+
+    <!-- HALAMAN HASIL SISWA -->
+    <div id="result-page" class="hidden">
+        <h2>Ujian Selesai!</h2>
+        <h1 style="font-size: 50px; color: #2ecc71; text-align: center;">Skor PG: <span id="final-score"></span>/100</h1>
+        <p style="text-align: center; font-size: 18px;">Jawaban Isian dan Uraian Anda telah berhasil direkam dan akan dinilai secara manual oleh Guru.</p>
+        <br>
+        <button class="btn btn-primary" style="display: block; margin: 0 auto;" onclick="logout()">Kembali ke Halaman Login</button>
+    </div>
+
+    <!-- HALAMAN GURU (DASHBOARD) -->
+    <div id="teacher-page" class="hidden">
+        <button class="btn logout-btn" onclick="logout()">Keluar</button>
+        <h2>Dashboard Guru - Rekap Nilai IPAS</h2>
+        <hr>
+        
+        <button class="btn btn-success" onclick="downloadCSV()">⬇️ Download Rekap (CSV)</button>
+        <button class="btn btn-warning" onclick="analyzeItems()">📊 Analisis Butir Soal PG</button>
+        <button class="btn btn-danger" onclick="clearData()" style="float: right;">Hapus Semua Data</button>
+
+        <div id="analysis-container" class="hidden" style="margin-top: 20px; padding: 15px; background: #e8f4f8; border-radius: 5px;">
+            <h3>Analisis Hasil Jawaban Siswa Per Soal (PG)</h3>
+            <ul id="analysis-list" style="line-height: 1.8;"></ul>
+        </div>
+
+        <div style="overflow-x: auto; margin-top: 20px;">
+            <table id="recap-table">
+                <thead>
+                    <tr>
+                        <th>Waktu Kumpul</th>
+                        <th>Nama Siswa</th>
+                        <th>Skor PG (Otomatis)</th>
+                        <th>Jawaban Isian (26-30)</th>
+                        <th>Jawaban Uraian (31-35)</th>
+                    </tr>
+                </thead>
+                <tbody id="recap-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 25 Soal Pilihan Ganda Sesuai Dokumen
+    const questions = [
+        { q: "1. Tulang rangka pada tubuh kita memiliki fungsi untuk melindungi organ penting. Organ yang dilindungi oleh tulang rusuk adalah...", opts: ["Jantung dan paru-paru", "Otak dan sumsum tulang", "Lambung dan usus halus", "Ginjal dan hati empedu"], ans: 0 },
+        { q: "2. Jika sendi peluru pada pangkal lengan seseorang mengalami cedera, gerakan yang paling sulit dilakukan orang tersebut adalah...", opts: ["Menekuk pergelangan", "Memutar lengan ke segala arah", "Menekuk jari-jari tangan", "Meluruskan telapak tangan"], ans: 1 },
+        { q: "3. Otot sering disebut sebagai alat gerak aktif pada tubuh manusia. Hal ini dikarenakan otot...", opts: ["Selalu melekat pada rangka", "Memiliki cairan pelumas", "Memiliki kemampuan kontraksi", "Melindungi saraf tulang belakang"], ans: 2 },
+        { q: "4. Budi sering membawa tas ransel yang sangat berat di salah satu bahunya setiap hari. Kebiasaan ini dapat memicu kelainan tulang punggung yang disebut...", opts: ["Penyakit Kifosis", "Penyakit Lordosis", "Penyakit Skoliosis", "Penyakit Osteoporosis"], ans: 2 },
+        { q: "5. Kabel panjang di tubuh kita yang bertugas menerima dan menghantarkan rangsangan dari luar ke otak adalah...", opts: ["Sistem jaringan rangka", "Sistem jaringan otot", "Sistem jaringan saraf", "Sistem jaringan sendi"], ans: 2 },
+        { q: "6. Ketika tangan kita tidak sengaja menyentuh panci panas, kita spontan menarik tangan. Urutan perjalanan rangsang refleks yang benar adalah...", opts: ["Otak - saraf - kulit - otot", "Kulit - saraf - otak - otot", "Saraf - otot - kulit - otak", "Otot - kulit - saraf - otak"], ans: 1 },
+        { q: "7. Penyakit pengeroposan tulang yang menyebabkan tulang menjadi rapuh dan umumnya dialami oleh orang lanjut usia dinamakan...", opts: ["Penyakit Rakhitis", "Penyakit Polio", "Penyakit Osteoporosis", "Penyakit Tetanus"], ans: 2 },
+        { q: "8. Seorang anak mengalami kekurangan kalsium dan vitamin D sejak bayi. Hal ini menyebabkan tulang kakinya membengkok (O). Upaya pencegahannya adalah...", opts: ["Banyak mengonsumsi gula manis", "Rajin berjemur di pagi hari", "Mengurangi makanan berkalsium", "Menghentikan semua olahraga"], ans: 1 },
+        { q: "9. Rempah-rempah menjadi alasan utama bangsa Eropa datang ke Nusantara. Bangsa Eropa yang pertama kali tiba di perairan Maluku adalah...", opts: ["Bangsa Spanyol", "Bangsa Portugis", "Bangsa Belanda", "Bangsa Inggris"], ans: 1 },
+        { q: "10. Belanda memberlakukan sistem Tanam Paksa (Cultuurstelsel) yang sangat merugikan rakyat. Alasan utama Belanda menerapkan sistem ini adalah...", opts: ["Membantu rakyat Indonesia", "Mengisi kas negara yang kosong", "Melatih rakyat bercocok tanam", "Menjalankan perintah kerajaan"], ans: 1 },
+        { q: "11. <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Pangeran_Diponegoro.jpg/200px-Pangeran_Diponegoro.jpg' alt='Gambar Pahlawan' style='display:block; margin:10px 0; max-height:200px; filter: grayscale(100%); border: 1px solid #ccc;'><br>Pahlawan nasional pada gambar di atas memimpin perang besar melawan Belanda di wilayah...", opts: ["Kepulauan Maluku", "Pulau Jawa Tengah", "Provinsi Aceh Utara", "Pulau Sumatra Barat"], ans: 1 },
+        { q: "12. Perlawanan rakyat di berbagai daerah sebelum abad ke-20 sering kali mengalami kegagalan. Penyebab utama kegagalan perlawanan tersebut adalah...", opts: ["Persenjataan militer modern", "Perjuangan bersifat kedaerahan", "Kurangnya jumlah prajurit", "Mendapat bantuan luar negeri"], ans: 1 },
+        { q: "13. Tokoh penting yang berjasa mengetik teks Proklamasi Kemerdekaan Indonesia dengan mesin tik adalah...", opts: ["Tokoh Sayuti Melik", "Tokoh Sukarni Kartodiwirjo", "Tokoh Soekarno Hatta", "Tokoh Burhanuddin Mohammad Diah"], ans: 0 },
+        { q: "14. Peristiwa Rengasdengklok terjadi karena perbedaan pendapat. Tujuan golongan muda mengamankan Soekarno dan Hatta adalah...", opts: ["Memaksa menyerah kepada musuh", "Menjauhkan dari pengaruh Jepang", "Menyembunyikan dari pihak Sekutu", "Menghindari terjadinya amukan massa"], ans: 1 },
+        { q: "15. Sidang BPUPKI pertama yang diselenggarakan pada tanggal 29 Mei - 1 Juni 1945 merumuskan tentang...", opts: ["Undang Undang Dasar 1945", "Naskah Piagam Jakarta Asli", "Dasar falsafah negara Pancasila", "Garis Besar Haluan Negara"], ans: 2 },
+        { q: "16. Organisasi Budi Utomo (1908) menandai babak baru. Perbedaan perjuangan sebelum dan sesudah 1908 terletak pada...", opts: ["Penggunaan alat senjata tajam", "Rasa benci terhadap kolonial", "Pergerakan lewat organisasi nasional", "Ketergantungan bantuan asing"], ans: 2 },
+        { q: "17. Sistem saraf pusat pada tubuh manusia yang berperan mengendalikan seluruh aktivitas tubuh terdiri dari...", opts: ["Jantung dan paru-paru", "Otak dan sumsum tulang belakang", "Saraf tepi dan serabut otot", "Kulit dan seluruh panca indera"], ans: 1 },
+        { q: "18. Jika seseorang mengalami kerusakan parah pada sistem saraf motoriknya, dampak langsung yang dirasakan adalah...", opts: ["Kehilangan kemampuan merasa sakit", "Menurunnya fungsi daya ingat otak", "Lumpuh dan tidak mampu bergerak", "Mengalami kebutaan penglihatan permanen"], ans: 2 },
+        { q: "19. Untuk menjaga kesehatan otot dan tulang secara maksimal, kita sangat disarankan mengonsumsi makanan yang kaya akan...", opts: ["Kalsium dan protein nabati/hewani", "Karbohidrat tinggi dan lemak jenuh", "Zat besi dan gula buatan manis", "Vitamin C dan aneka lemak jenuh"], ans: 0 },
+        { q: "20. Perjanjian Linggarjati, Renville, dan Roem-Royen merupakan upaya Indonesia mempertahankan kemerdekaan melalui jalur...", opts: ["Perang gerilya bersenjata", "Perjuangan konfrontasi fisik", "Diplomasi atau perundingan meja", "Perdagangan dan embargo ekonomi"], ans: 2 },
+        { q: "21. Terjadinya Agresi Militer Belanda I dan II pasca proklamasi menunjukkan bahwa pihak Belanda...", opts: ["Ingin membantu ekonomi Indonesia", "Belum mau mengakui kemerdekaan RI", "Mematuhi setiap perjanjian damai dunia", "Meminta bantuan militer kepada PBB"], ans: 1 },
+        { q: "22. Tokoh dari golongan muda yang pertama kali mendengar berita kekalahan Jepang tanpa syarat melalui radio adalah...", opts: ["Sutan Sjahrir", "Achmad Soebardjo", "Mohammad Hatta", "Radjiman Wedyodiningrat"], ans: 0 },
+        { q: "23. Salah satu fungsi sendi adalah memberikan kelenturan. Tanpa adanya sendi putar di bagian leher, manusia akan kesulitan untuk...", opts: ["Menekuk lutut saat berlari kencang", "Menengok arah pandangan ke kanan dan kiri", "Mencengkeram dan memegang benda berat", "Mengangkat tangan secara lurus ke atas"], ans: 1 },
+        { q: "24. Penyakit tetanus dapat menyebabkan otot tubuh menjadi kaku dan kejang. Penyakit ini umumnya disebabkan oleh...", opts: ["Infeksi bakteri dari luka kotor", "Kekurangan vitamin D dalam darah", "Benturan keras pada bagian kepala", "Kekurangan kalsium pada struktur tulang"], ans: 0 },
+        { q: "25. Pembacaan teks proklamasi dilakukan sangat sederhana. Pesan moral dari peristiwa sejarah tersebut bagi kita saat ini adalah...", opts: ["Kemerdekaan harus selalu dirayakan meriah", "Semangat juang lebih penting dari kemewahan", "Jepang melarang segala perayaan kemerdekaan", "Indonesia tidak memiliki cukup dana saat itu"], ans: 1 }
+    ];
+
+    let currentUser = "";
+    const dbKey = "ipas_exam_data_v2"; // Unique key
+
+    function toggleTeacherPass() {
+        const role = document.getElementById("role-select").value;
+        if(role === "guru") {
+            document.getElementById("name-group").classList.add("hidden");
+            document.getElementById("pass-group").classList.remove("hidden");
+        } else {
+            document.getElementById("name-group").classList.remove("hidden");
+            document.getElementById("pass-group").classList.add("hidden");
+        }
+    }
+
+    function login() {
+        const role = document.getElementById("role-select").value;
+        if(role === "guru") {
+            const pass = document.getElementById("password").value;
+            if(pass === "admin123") {
+                showPage("teacher-page");
+                loadTeacherData();
+            } else {
+                alert("Password Guru Salah!");
+            }
+        } else {
+            const name = document.getElementById("username").value.trim();
+            if(name === "") return alert("Nama tidak boleh kosong!");
+            currentUser = name;
+            document.getElementById("student-name-display").innerText = currentUser;
+            showPage("student-page");
+            renderQuiz();
+        }
+    }
+
+    function renderQuiz() {
+        const container = document.getElementById("quiz-container");
+        container.innerHTML = "";
+        questions.forEach((item, index) => {
+            let html = `<div class="question-card">
+                <p><strong>${item.q}</strong></p>
+                <div class="options">`;
+            item.opts.forEach((opt, i) => {
+                html += `<label><input type="radio" name="q${index}" value="${i}"> ${String.fromCharCode(65+i)}. ${opt}</label>`;
+            });
+            html += `</div></div>`;
+            container.innerHTML += html;
+        });
+    }
+
+    function submitExam() {
+        if(!confirm("Yakin ingin mengumpulkan jawaban?")) return;
+        
+        let correctCount = 0;
+        let studentAnswers = [];
+        
+        questions.forEach((item, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            const val = selected ? parseInt(selected.value) : -1;
+            studentAnswers.push(val);
+            if(val === item.ans) correctCount++;
+        });
+
+        // Skor 100 berdasarkan 25 soal PG
+        let score = Math.round((correctCount / questions.length) * 100);
+        
+        // Ambil data isian & uraian
+        let arrIsian = [
+            document.getElementById("isian26").value,
+            document.getElementById("isian27").value,
+            document.getElementById("isian28").value,
+            document.getElementById("isian29").value,
+            document.getElementById("isian30").value
+        ];
+        
+        let arrUraian = [
+            document.getElementById("uraian31").value,
+            document.getElementById("uraian32").value,
+            document.getElementById("uraian33").value,
+            document.getElementById("uraian34").value,
+            document.getElementById("uraian35").value
+        ];
+
+        let record = {
+            date: new Date().toLocaleString(),
+            name: currentUser,
+            score: score,
+            answers: studentAnswers,
+            isian: arrIsian,
+            uraian: arrUraian
+        };
+
+        let data = JSON.parse(localStorage.getItem(dbKey)) || [];
+        data.push(record);
+        localStorage.setItem(dbKey, JSON.stringify(data));
+
+        document.getElementById("final-score").innerText = score;
+        showPage("result-page");
+        window.scrollTo(0, 0);
+    }
+
+    function loadTeacherData() {
+        let data = JSON.parse(localStorage.getItem(dbKey)) || [];
+        let tbody = document.getElementById("recap-body");
+        tbody.innerHTML = "";
+        data.forEach(row => {
+            // Format jawaban Isian dan Uraian agar rapi di tabel web
+            let isianFormat = `26. ${row.isian[0]}<br>27. ${row.isian[1]}<br>28. ${row.isian[2]}<br>29. ${row.isian[3]}<br>30. ${row.isian[4]}`;
+            let uraianFormat = `31. ${row.uraian[0]}<br>32. ${row.uraian[1]}<br>33. ${row.uraian[2]}<br>34. ${row.uraian[3]}<br>35. ${row.uraian[4]}`;
+            
+            tbody.innerHTML += `<tr>
+                <td style="font-size:12px;">${row.date}</td>
+                <td><strong>${row.name}</strong></td>
+                <td style="text-align:center; font-weight:bold; font-size:18px;">${row.score}</td>
+                <td style="font-size:12px;">${isianFormat}</td>
+                <td style="font-size:12px;">${uraianFormat}</td>
+            </tr>`;
+        });
+    }
+
+    function analyzeItems() {
+        let data = JSON.parse(localStorage.getItem(dbKey)) || [];
+        if(data.length === 0) return alert("Belum ada data siswa.");
+        
+        let analysisContainer = document.getElementById("analysis-container");
+        let list = document.getElementById("analysis-list");
+        list.innerHTML = "";
+        
+        questions.forEach((item, qIndex) => {
+            let correct = 0;
+            data.forEach(student => {
+                if(student.answers[qIndex] === item.ans) correct++;
+            });
+            let percentage = Math.round((correct / data.length) * 100);
+            
+            // Format teks soal (hapus tag HTML gambar jika ada untuk tampilan bersih)
+            let qText = item.q.replace(/<[^>]*>?/gm, ''); 
+            list.innerHTML += `<li><strong>No ${qIndex + 1}:</strong> Benar: ${correct}/${data.length} Siswa (${percentage}%) <br><small><i>(${qText.substring(0, 70)}...)</i></small></li>`;
+        });
+        analysisContainer.classList.remove("hidden");
+    }
+
+    function downloadCSV() {
+        let data = JSON.parse(localStorage.getItem(dbKey)) || [];
+        if(data.length === 0) return alert("Tidak ada data untuk didownload");
+        
+        // Escape CSV Strings helper
+        const esc = (str) => `"${(str || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`;
+
+        let csvContent = "data:text/csv;charset=utf-8,Waktu,Nama Siswa,Skor PG,Isian 26,Isian 27,Isian 28,Isian 29,Isian 30,Uraian 31,Uraian 32,Uraian 33,Uraian 34,Uraian 35\n";
+        
+        data.forEach(row => {
+            csvContent += `${esc(row.date)},${esc(row.name)},${row.score},${esc(row.isian[0])},${esc(row.isian[1])},${esc(row.isian[2])},${esc(row.isian[3])},${esc(row.isian[4])},${esc(row.uraian[0])},${esc(row.uraian[1])},${esc(row.uraian[2])},${esc(row.uraian[3])},${esc(row.uraian[4])}\n`;
+        });
+        
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Rekap_Nilai_IPAS_Kelas6_Lengkap.csv");
+        document.body.appendChild(link);
+        link.click();
+    }
+
+    function clearData() {
+        if(prompt("Ketik 'HAPUS' untuk menghapus seluruh data siswa:") === "HAPUS") {
+            localStorage.removeItem(dbKey);
+            loadTeacherData();
+            document.getElementById("analysis-container").classList.add("hidden");
+            alert("Data berhasil dihapus.");
+        }
+    }
+
+    function showPage(pageId) {
+        document.getElementById("login-page").classList.add("hidden");
+        document.getElementById("student-page").classList.add("hidden");
+        document.getElementById("result-page").classList.add("hidden");
+        document.getElementById("teacher-page").classList.add("hidden");
+        document.getElementById(pageId).classList.remove("hidden");
+    }
+
+    function logout() {
+        currentUser = "";
+        showPage("login-page");
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+        document.getElementById("role-select").value = "siswa";
+        toggleTeacherPass();
+    }
+</script>
+</body>
+</html>
